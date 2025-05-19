@@ -39,7 +39,7 @@ const safetySettings = [
 ];
 
 const model = genAI.getGenerativeModel({
-    model: "gemini-pro",
+    model: "gemini-1.0-pro", // <--- THE FIX IS HERE
     safetySettings: safetySettings, // Apply defined safety settings
     // generationConfig: { // You can also explore generationConfig if needed
     //  temperature: 0.7, // Example
