@@ -1,0 +1,97 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Idea Generator</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; }
+        .container { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { color: #007bff; }
+        input[type="text"] { width: calc(100% - 90px); padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        button { padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        #results { margin-top: 20px; }
+        ul { list-style-type: none; padding: 0; }
+        li { background-color: #e9ecef; margin-bottom: 8px; padding: 10px; border-radius: 4px; }
+        .loading { margin-top: 15px; font-style: italic; }
+        .error { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Tweet/Blog Post Idea Generator</h1>
+        <input type="text" id="topicInput" placeholder="Enter a topic (e.g., Bitcoin)">
+        <button id="generateBtn">Generate Ideas</button>
+
+        <div id="loading" class="loading" style="display:none;">Generating ideas, please wait...</div>
+        <div id="errorDisplay" class="error" style="display:none;"></div>
+
+        <div id="results">
+            <h2>Generated Ideas:</h2>
+            <ul id="ideas-list">
+                <!-- Ideas will be populated here -->
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const topicInput = document.getElementById('topicInput');
+        const generateBtn = document.getElementById('generateBtn');
+        const ideasList = document.getElementById('ideas-list');
+        const loadingDiv = document.getElementById('loading');
+        const errorDisplay = document.getElementById('errorDisplay');
+
+        generateBtn.addEventListener('click', async () => {
+            const topic = topicInput.value.trim();
+            if (!topic) {
+                alert("Please enter a topic!");
+                return;
+            }
+
+            // Clear previous results and errors
+            ideasList.innerHTML = '';
+            errorDisplay.textContent = '';
+            errorDisplay.style.display = 'none';
+            loadingDiv.style.display = 'block'; // Show loading
+
+            try {
+                const response = await fetch('/generate-ideas', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ topic: topic })
+                });
+
+                loadingDiv.style.display = 'none'; // Hide loading
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `Server error: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.ideas && data.ideas.length > 0) {
+                    data.ideas.forEach(idea => {
+                        const li = document.createElement('li');
+                        li.textContent = idea;
+                        ideasList.appendChild(li);
+                    });
+                } else {
+                    ideasList.innerHTML = '<li>No ideas generated. Try a different topic or rephrase.</li>';
+                }
+
+            } catch (error) {
+                loadingDiv.style.display = 'none'; // Hide loading
+                console.error('Error fetching ideas:', error);
+                errorDisplay.textContent = `Error: ${error.message}`;
+                errorDisplay.style.display = 'block';
+                ideasList.innerHTML = '<li>Could not fetch ideas.</li>';
+            }
+        });
+    </script>
+</body>
+</html>
