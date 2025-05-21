@@ -1,38 +1,265 @@
-<!-- public/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Idea Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; }
-        .container { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h1 { color: #007bff; }
-        input[type="text"] { width: calc(100% - 90px); padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; }
-        button { padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        button:hover { background-color: #0056b3; }
-        #results { margin-top: 20px; }
-        ul { list-style-type: none; padding: 0; }
-        li { background-color: #e9ecef; margin-bottom: 8px; padding: 10px; border-radius: 4px; }
-        .loading { margin-top: 15px; font-style: italic; }
-        .error { color: red; font-weight: bold; }
+        /* Reset and Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9f9f9;
+            color: #333333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px; /* Add some padding for smaller screens if content touches edge */
+            line-height: 1.6;
+        }
+
+        /* Page Container */
+        .page-container {
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        /* Content Wrapper */
+        .content-wrapper {
+            background-color: #ffffff; /* Soft white container on a slightly different background */
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Header */
+        header {
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #007BFF;
+            margin-bottom: 8px;
+        }
+
+        header .subtitle {
+            font-size: 1.1rem;
+            font-weight: 300;
+            color: #6c757d; /* Muted color */
+        }
+
+        /* Input Area */
+        .input-area {
+            margin-bottom: 30px;
+        }
+
+        #topicInput {
+            width: 100%;
+            padding: 15px;
+            font-size: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        #topicInput::placeholder {
+            color: #aaaaaa;
+            font-weight: 300;
+        }
+
+        #generateBtn {
+            width: 100%;
+            background-color: #007BFF;
+            color: white;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease;
+        }
+
+        #generateBtn:hover {
+            background-color: #0056b3;
+        }
+        #generateBtn:active {
+            transform: scale(0.98);
+        }
+        #generateBtn:disabled {
+            background-color: #a0cfff; /* Lighter blue when disabled */
+            cursor: not-allowed;
+        }
+
+        /* Loading Indicator & Error Display */
+        .feedback-area {
+            min-height: 24px; /* Reserve space to prevent layout shift */
+            margin-bottom: 20px;
+        }
+
+        .loading-indicator {
+            display: none; /* Hidden by default */
+            font-size: 0.9rem;
+            color: #007BFF;
+            font-weight: 300;
+        }
+        .loading-indicator .spinner {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            border: 2px solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.75s linear infinite;
+            margin-right: 8px;
+            vertical-align: text-bottom;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+
+        .error-message {
+            display: none; /* Hidden by default */
+            color: #dc3545; /* A standard error red */
+            background-color: #f8d7da;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 300;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Results Section */
+        .results-section {
+            text-align: left; /* Ideas should be left-aligned */
+            margin-top: 20px; /* Ensure space even if feedback area is empty */
+        }
+
+        .results-section h2 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #333333;
+            margin-bottom: 15px;
+            display: none; /* Hidden until results are shown */
+        }
+
+        #ideas-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #ideas-list li {
+            background-color: #f0f4f8; /* Very light blue accent for list items */
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            font-weight: 300;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInItem 0.5s ease-out forwards;
+            border-left: 3px solid #007BFF;
+        }
+
+        #ideas-list li:nth-child(1) { animation-delay: 0.1s; }
+        #ideas-list li:nth-child(2) { animation-delay: 0.2s; }
+        #ideas-list li:nth-child(3) { animation-delay: 0.3s; }
+        #ideas-list li:nth-child(4) { animation-delay: 0.4s; }
+        #ideas-list li:nth-child(5) { animation-delay: 0.5s; }
+
+
+        @keyframes fadeInItem {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        footer p {
+            font-size: 0.85rem;
+            color: #aaaaaa; /* Light gray */
+            font-weight: 300;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 600px) {
+            .content-wrapper {
+                padding: 20px;
+                margin: 0; /* Remove horizontal margin if body padding is enough */
+            }
+
+            header h1 {
+                font-size: 2rem;
+            }
+
+            header .subtitle {
+                font-size: 1rem;
+            }
+
+            /* Input and button are already 100% width, padding might need adjustment if too tight */
+            #topicInput, #generateBtn {
+                padding: 12px;
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>AI Tweet/Blog Post Idea Generator</h1>
-        <input type="text" id="topicInput" placeholder="Enter a topic (e.g., Bitcoin)">
-        <button id="generateBtn">Generate Ideas</button>
+    <div class="page-container">
+        <div class="content-wrapper">
+            <header>
+                <h1>AI Idea Generator</h1>
+                <p class="subtitle">Get creative content ideas in seconds.</p>
+            </header>
 
-        <div id="loading" class="loading" style="display:none;">Generating ideas, please wait...</div>
-        <div id="errorDisplay" class="error" style="display:none;"></div>
+            <main>
+                <div class="input-area">
+                    <input type="text" id="topicInput" placeholder="Enter your topic…">
+                    <button id="generateBtn">Generate Ideas</button>
+                </div>
 
-        <div id="results">
-            <h2>Generated Ideas:</h2>
-            <ul id="ideas-list">
-                <!-- Ideas will be populated here -->
-            </ul>
+                <div class="feedback-area">
+                    <div class="loading-indicator" id="loadingIndicator">
+                        <span class="spinner"></span>Generating ideas, please wait...
+                    </div>
+                    <div class="error-message" id="errorDisplay"></div>
+                </div>
+
+                <section class="results-section" id="resultsArea">
+                    <h2 id="resultsHeader">Generated Ideas:</h2>
+                    <ul id="ideas-list">
+                        <!-- Ideas will be populated here -->
+                    </ul>
+                </section>
+            </main>
+
+            <footer>
+                <p>© 2024 AI Idea Generator. Powered by AI.</p>
+            </footer>
         </div>
     </div>
 
@@ -40,21 +267,40 @@
         const topicInput = document.getElementById('topicInput');
         const generateBtn = document.getElementById('generateBtn');
         const ideasList = document.getElementById('ideas-list');
-        const loadingDiv = document.getElementById('loading');
+        const loadingIndicator = document.getElementById('loadingIndicator');
         const errorDisplay = document.getElementById('errorDisplay');
+        const resultsArea = document.getElementById('resultsArea');
+        const resultsHeader = document.getElementById('resultsHeader');
 
-        generateBtn.addEventListener('click', async () => {
+        function showLoading(isLoading) {
+            loadingIndicator.style.display = isLoading ? 'block' : 'none';
+            generateBtn.disabled = isLoading;
+        }
+
+        function showError(message) {
+            ideasList.innerHTML = ''; // Clear any old ideas
+            resultsHeader.style.display = 'none';
+            errorDisplay.textContent = message;
+            errorDisplay.style.display = 'block';
+        }
+
+        function clearFeedback() {
+            errorDisplay.textContent = '';
+            errorDisplay.style.display = 'none';
+            resultsHeader.style.display = 'none';
+            ideasList.innerHTML = '';
+        }
+
+        async function handleGenerate() {
             const topic = topicInput.value.trim();
             if (!topic) {
-                alert("Please enter a topic!");
+                showError("Please enter a topic to get ideas!");
+                topicInput.focus();
                 return;
             }
 
-            // Clear previous results and errors
-            ideasList.innerHTML = '';
-            errorDisplay.textContent = '';
-            errorDisplay.style.display = 'none';
-            loadingDiv.style.display = 'block'; // Show loading
+            clearFeedback();
+            showLoading(true);
 
             try {
                 const response = await fetch('/generate-ideas', {
@@ -65,31 +311,47 @@
                     body: JSON.stringify({ topic: topic })
                 });
 
-                loadingDiv.style.display = 'none'; // Hide loading
+                showLoading(false);
 
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || `Server error: ${response.status}`);
+                    let errorMsg = "An unexpected error occurred. Please try again.";
+                    try {
+                        const errorData = await response.json();
+                        errorMsg = errorData.error || errorData.message || `Server error: ${response.status}`;
+                    } catch (e) {
+                        // If response is not JSON, use generic message or status text
+                        errorMsg = `Server error: ${response.status} - ${response.statusText}`;
+                    }
+                    throw new Error(errorMsg);
                 }
 
                 const data = await response.json();
 
                 if (data.ideas && data.ideas.length > 0) {
-                    data.ideas.forEach(idea => {
+                    resultsHeader.style.display = 'block';
+                    data.ideas.forEach((idea, index) => {
                         const li = document.createElement('li');
-                        li.textContent = idea;
+                        // Using innerHTML to easily render the emoji if preferred, but textContent is safer
+                        // If using innerHTML for special characters or simple tags, ensure idea content is sanitized server-side if it comes from untrusted sources
+                        li.textContent = `💡 ${index + 1}. ${idea}`;
                         ideasList.appendChild(li);
                     });
                 } else {
-                    ideasList.innerHTML = '<li>No ideas generated. Try a different topic or rephrase.</li>';
+                    showError(data.message || "Hmm, couldn’t find ideas. Try a different topic or rephrase.");
                 }
 
             } catch (error) {
-                loadingDiv.style.display = 'none'; // Hide loading
                 console.error('Error fetching ideas:', error);
-                errorDisplay.textContent = `Error: ${error.message}`;
-                errorDisplay.style.display = 'block';
-                ideasList.innerHTML = '<li>Could not fetch ideas.</li>';
+                showLoading(false);
+                showError(error.message || "Could not fetch ideas. Please check your connection or try again later.");
+            }
+        }
+
+        generateBtn.addEventListener('click', handleGenerate);
+        topicInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent default form submission if it were in a form
+                handleGenerate();
             }
         });
     </script>
