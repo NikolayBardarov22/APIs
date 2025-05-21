@@ -1,0 +1,254 @@
+/* Global Resets & Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Poppins', sans-serif; /* Changed font */
+    background-color: #f4f7f6; /* Softer, slightly off-white */
+    color: #2c3e50; /* Darker, more professional text */
+    display: flex;
+    flex-direction: column; /* Allow footer to stick to bottom if content is short */
+    align-items: center;
+    justify-content: center; /* Center content vertically for initial load */
+    padding: 20px;
+    line-height: 1.65;
+    transition: background-color 0.3s ease;
+}
+
+.page-wrapper { /* New wrapper to ensure proper centering and full height usage */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 100%; /* Ensure it takes at least full viewport height */
+}
+
+.container {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 650px; /* Slightly wider for better spacing */
+    padding: 35px 45px;
+    border-radius: 16px; /* More rounded */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Softer, more diffuse shadow */
+    text-align: center;
+    margin: auto; /* Helps with centering within flex parent if needed */
+}
+
+/* Header */
+header {
+    margin-bottom: 30px;
+}
+
+header h1 {
+    font-size: 2.8rem; /* Larger */
+    font-weight: 700;
+    color: #2980b9; /* A deeper, professional blue */
+    margin-bottom: 10px;
+    line-height: 1.2;
+}
+
+header .subtitle {
+    font-size: 1.15rem;
+    font-weight: 300;
+    color: #555; /* Slightly darker muted color */
+    max-width: 450px;
+    margin: 0 auto 20px auto; /* Center the subtitle text */
+}
+
+/* Input Section */
+.input-section {
+    margin-bottom: 30px;
+}
+.input-section h2 { /* "What topic are you exploring?" */
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: #34495e; /* Another shade of professional blue/gray */
+    margin-bottom: 20px;
+}
+
+.input-area {
+    display: flex;
+    flex-direction: column; /* Stack input and button on all screens */
+    gap: 15px; /* Space between input and button */
+}
+
+#topicInput {
+    width: 100%;
+    padding: 16px 20px;
+    font-size: 1rem;
+    border: 1px solid #ced4da; /* Lighter border */
+    border-radius: 10px; /* More rounded */
+    font-family: 'Poppins', sans-serif;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+#topicInput::placeholder {
+    color: #999;
+    font-weight: 300;
+}
+#topicInput:focus {
+    outline: none;
+    border-color: #2980b9; /* Highlight color */
+    box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.15);
+}
+
+#generateBtn {
+    width: 100%;
+    background-color: #2980b9; /* Matching deeper blue */
+    color: white;
+    padding: 16px;
+    font-size: 1.1rem;
+    font-weight: 600; /* Bolder */
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease;
+    display: flex; /* For spinner alignment */
+    align-items: center;
+    justify-content: center;
+}
+#generateBtn:hover {
+    background-color: #1f638b; /* Darker shade on hover */
+}
+#generateBtn:active {
+    transform: scale(0.98);
+}
+#generateBtn.loading, #generateBtn:disabled {
+    background-color: #7fa8c2; /* Lighter, disabled blue */
+    cursor: not-allowed;
+}
+
+/* Feedback Area: Loading and Error */
+.feedback-area {
+    min-height: 30px; /* Space for messages */
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.loading-indicator {
+    display: none; /* Hidden by default */
+    align-items: center; /* Vertically align spinner and text */
+    justify-content: center; /* Horizontally center content */
+    font-size: 1rem;
+    color: #2980b9;
+    font-weight: 500; /* More prominent */
+    padding: 10px 0;
+}
+.loading-indicator .spinner {
+    display: inline-block;
+    width: 1.2em; /* Slightly larger */
+    height: 1.2em;
+    border: 3px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+    margin-right: 10px; /* More space */
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.error-message {
+    display: none; /* Hidden by default */
+    color: #c0392b; /* Professional error red */
+    background-color: #fdecea;
+    padding: 12px 15px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border: 1px solid #f5c6cb;
+    margin-top: 10px; /* Spacing if it appears after loading */
+}
+
+/* Results Section */
+.results-section {
+    text-align: left;
+    margin-top: 10px; /* Adjusted, as feedback area already has margin-bottom */
+}
+.results-section h3 { /* "Here are some sparks for you:" */
+    font-size: 1.5rem;
+    font-weight: 600; /* Bolder */
+    color: #34495e;
+    margin-bottom: 20px;
+    display: none; /* Hidden until results appear */
+    text-align: center; /* Centering the results header */
+}
+#ideas-list {
+    list-style-type: none;
+    padding: 0;
+}
+#ideas-list li {
+    background-color: #eaf3f8; /* Lighter, softer blue for ideas */
+    padding: 15px 20px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    font-weight: 400; /* Normal weight */
+    border-left: 4px solid #2980b9; /* Accent border */
+    opacity: 0;
+    transform: translateY(15px);
+    animation: fadeInItem 0.4s ease-out forwards;
+    font-size: 0.95rem; /* Slightly smaller ideas text if desired */
+    color: #2c3e50;
+}
+.idea-number {
+    font-weight: 600;
+    color: #1f638b; /* Darker blue for number */
+    margin-right: 3px;
+}
+
+#ideas-list li:nth-child(1) { animation-delay: 0.05s; }
+#ideas-list li:nth-child(2) { animation-delay: 0.1s; }
+#ideas-list li:nth-child(3) { animation-delay: 0.15s; }
+#ideas-list li:nth-child(4) { animation-delay: 0.2s; }
+#ideas-list li:nth-child(5) { animation-delay: 0.25s; }
+
+@keyframes fadeInItem {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Footer */
+footer {
+    margin-top: 40px;
+    padding-top: 25px;
+    border-top: 1px solid #e0e0e0; /* Lighter separator */
+}
+footer p {
+    font-size: 0.9rem;
+    color: #7f8c8d; /* Muted gray */
+    font-weight: 300;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 700px) {
+    .container {
+        padding: 25px 20px; /* Adjust padding for smaller screens */
+        margin-top: 20px; /* Ensure some space from top on mobile */
+        margin-bottom: 20px; /* Ensure some space from bottom */
+    }
+    header h1 {
+        font-size: 2.2rem;
+    }
+    header .subtitle {
+        font-size: 1rem;
+    }
+    .input-section h2 {
+        font-size: 1.2rem;
+    }
+    .results-section h3 {
+        font-size: 1.3rem;
+    }
+    #ideas-list li {
+        padding: 12px 15px;
+    }
+}

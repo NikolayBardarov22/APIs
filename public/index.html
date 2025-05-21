@@ -3,284 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Idea Spark</title> {/* Slightly different title */}
+    <title>AI Idea Spark</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700&display=swap" rel="stylesheet"> {/* Changed font */}
-    <style>
-        /* Reset and Base Styles */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        html, body {
-            height: 100%;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif; /* New Font */
-            /* Subtle Gradient Background for more depth */
-            background: linear-gradient(135deg, #f0f4f8 0%, #e6e9f0 100%);
-            color: #2c3e50; /* Darker, slightly desaturated blue/grey for text */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            line-height: 1.7;
-        }
-
-        /* Page Container */
-        .page-container {
-            width: 100%;
-            max-width: 650px; /* Slightly wider */
-            text-align: center;
-        }
-
-        /* Content Wrapper */
-        .content-wrapper {
-            background-color: #ffffff;
-            padding: 35px 45px;
-            border-radius: 16px; /* More pronounced rounding */
-            box-shadow: 0 10px 30px rgba(44, 62, 80, 0.15); /* Softer, more spread shadow */
-            transition: transform 0.3s ease-in-out; /* Subtle hover effect */
-        }
-        /* .content-wrapper:hover {
-            transform: translateY(-5px);
-        } */
-
-        /* Header */
-        header {
-            margin-bottom: 35px;
-        }
-
-        header h1 {
-            font-size: 2.8rem; /* Slightly larger */
-            font-weight: 700;
-            /* Creative Teal for the main title */
-            color: #1abc9c; /* Teal */
-            margin-bottom: 10px;
-            letter-spacing: -1px; /* Tighter letter spacing */
-        }
-
-        header .subtitle {
-            font-size: 1.15rem;
-            font-weight: 300;
-            color: #7f8c8d; /* Muted grey */
-        }
-
-        /* Input Area */
-        .input-area {
-            margin-bottom: 30px;
-        }
-
-        #topicInput {
-            width: 100%;
-            padding: 16px 20px;
-            font-size: 1.05rem;
-            border: 1px solid #dadce0; /* Google-like input border */
-            border-radius: 10px;
-            margin-bottom: 25px;
-            font-family: 'Poppins', sans-serif;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-        #topicInput:focus {
-            border-color: #1abc9c; /* Teal focus */
-            box-shadow: 0 0 0 3px rgba(26, 188, 156, 0.15);
-            outline: none;
-        }
-
-        #topicInput::placeholder {
-            color: #a0a0a0;
-            font-weight: 300;
-        }
-
-        #generateBtn {
-            width: 100%;
-            /* Warm Accent Button */
-            background: linear-gradient(135deg, #ff7e5f, #feb47b); /* Coral/Orange Gradient */
-            color: white;
-            padding: 16px;
-            font-size: 1.15rem;
-            font-weight: 600; /* Bolder button text */
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.25s ease-in-out;
-            box-shadow: 0 4px 15px rgba(255, 126, 95, 0.3);
-        }
-
-        #generateBtn:hover {
-            opacity: 0.9;
-            box-shadow: 0 6px 20px rgba(255, 126, 95, 0.4);
-            transform: translateY(-2px);
-        }
-        #generateBtn:active {
-            transform: translateY(0px) scale(0.97);
-            box-shadow: 0 2px 10px rgba(255, 126, 95, 0.2);
-        }
-        #generateBtn:disabled {
-            background: #fbc0aa; /* Lighter, desaturated orange when disabled */
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
-
-        /* Loading Indicator & Error Display */
-        .feedback-area {
-            min-height: 24px;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-
-        .loading-indicator {
-            display: none;
-            font-size: 1rem;
-            color: #1abc9c; /* Teal for loading text */
-            font-weight: 500;
-        }
-        .loading-indicator .spinner {
-            display: inline-block;
-            width: 1.2em;
-            height: 1.2em;
-            border: 3px solid currentColor;
-            border-right-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.75s linear infinite;
-            margin-right: 10px;
-            vertical-align: middle; /* Better alignment */
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .error-message {
-            display: none;
-            color: #e74c3c; /* Stronger red */
-            background-color: #fdedec; /* Lighter red background */
-            padding: 12px 15px;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            border: 1px solid #f8c6c0;
-            font-weight: 500;
-        }
-
-        /* Results Section */
-        .results-section {
-            text-align: left;
-            margin-top: 20px;
-        }
-
-        .results-section h2 {
-            font-size: 1.6rem;
-            font-weight: 600;
-            color: #34495e; /* Darker blue-grey for subheading */
-            margin-bottom: 20px;
-            display: none; /* Hidden until results are shown */
-            border-bottom: 1px solid #ecf0f1;
-            padding-bottom: 10px;
-        }
-
-        #ideas-list {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        #ideas-list li {
-            background-color: #f8f9fa;
-            padding: 15px 18px;
-            margin-bottom: 12px;
-            border-radius: 8px;
-            font-weight: 500; /* Slightly bolder idea text */
-            opacity: 0;
-            transform: translateX(-20px); /* Animate from left */
-            animation: slideInItem 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-            border-left: 4px solid #1abc9c; /* Teal accent border */
-            color: #2c3e50;
-            box-shadow: 0 2px 5px rgba(44, 62, 80, 0.05);
-        }
-        /* Staggering animations */
-        #ideas-list li:nth-child(1) { animation-delay: 0.1s; }
-        #ideas-list li:nth-child(2) { animation-delay: 0.2s; }
-        #ideas-list li:nth-child(3) { animation-delay: 0.3s; }
-        #ideas-list li:nth-child(4) { animation-delay: 0.4s; }
-        #ideas-list li:nth-child(5) { animation-delay: 0.5s; }
-
-
-        @keyframes slideInItem { /* New animation */
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        /* Footer */
-        footer {
-            margin-top: 45px;
-            padding-top: 25px;
-            border-top: 1px solid #e0e0e0;
-        }
-
-        footer p {
-            font-size: 0.9rem;
-            color: #95a5a6; /* Lighter grey */
-            font-weight: 300;
-        }
-
-        /* Mobile Responsiveness */
-        @media (max-width: 700px) { /* Adjusted breakpoint */
-            .content-wrapper {
-                padding: 25px 20px; /* Adjusted padding for mobile */
-            }
-
-            header h1 {
-                font-size: 2.2rem;
-            }
-
-            header .subtitle {
-                font-size: 1rem;
-            }
-             #topicInput, #generateBtn {
-                padding: 14px;
-                font-size: 1rem;
-            }
-        }
-         @media (max-width: 400px) {
-            header h1 {
-                font-size: 2rem;
-            }
-             header .subtitle {
-                font-size: 0.9rem;
-            }
-         }
-
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css"> <!-- Link to your external CSS file -->
 </head>
 <body>
-    <div class="page-container">
-        <div class="content-wrapper">
+    <div class="page-wrapper">
+        <div class="container">
             <header>
                 <h1>AI Idea Spark</h1>
-                <p class="subtitle">Ignite your creativity with AI-powered ideas.</p> {/* Slightly different subtitle */}
+                <p class="subtitle">Ignite your creativity with AI-powered ideas.</p>
             </header>
 
             <main>
-                <div class="input-area">
-                    <input type="text" id="topicInput" placeholder="What topic are you exploring?"> {/* Different placeholder */}
-                    <button id="generateBtn">Spark Ideas ✨</button> {/* Button text with emoji */}
-                </div>
+                <section class="input-section">
+                    <h2>What topic are you exploring?</h2>
+                    <div class="input-area">
+                        <input type="text" id="topicInput" placeholder="e.g., Sustainable Energy, Future of Work...">
+                        <button id="generateBtn">Spark Ideas ✨</button>
+                    </div>
+                </section>
 
                 <div class="feedback-area">
                     <div class="loading-indicator" id="loadingIndicator">
-                        <span class="spinner"></span>Conjuring brilliance...
+                        <span class="spinner"></span>Brewing up some bright ideas...
                     </div>
                     <div class="error-message" id="errorDisplay"></div>
                 </div>
 
                 <section class="results-section" id="resultsArea">
-                    <h2 id="resultsHeader">Your Fresh Ideas:</h2> {/* Different header */}
+                    <h3 id="resultsHeader">Here are some sparks for you:</h3>
                     <ul id="ideas-list">
                         <!-- Ideas will be populated here -->
                     </ul>
@@ -299,24 +53,27 @@
         const ideasList = document.getElementById('ideas-list');
         const loadingIndicator = document.getElementById('loadingIndicator');
         const errorDisplay = document.getElementById('errorDisplay');
-        const resultsArea = document.getElementById('resultsArea');
+        // const resultsArea = document.getElementById('resultsArea'); // resultsArea not directly manipulated for show/hide anymore
         const resultsHeader = document.getElementById('resultsHeader');
 
         function showLoading(isLoading) {
-            loadingIndicator.style.display = isLoading ? 'flex' : 'none'; /* Using flex for spinner alignment */
-            loadingIndicator.style.alignItems = 'center';
-            loadingIndicator.style.justifyContent = 'center';
+            loadingIndicator.style.display = isLoading ? 'flex' : 'none'; // Use flex for centering spinner
             generateBtn.disabled = isLoading;
+            if (isLoading) {
+                generateBtn.classList.add('loading');
+            } else {
+                generateBtn.classList.remove('loading');
+            }
         }
 
         function showError(message) {
             ideasList.innerHTML = '';
             resultsHeader.style.display = 'none';
-            errorDisplay.innerHTML = message; /* Use innerHTML for friendly error messages with potential simple formatting */
+            errorDisplay.textContent = message;
             errorDisplay.style.display = 'block';
         }
 
-        function clearFeedback() {
+        function clearFeedbackAndResults() {
             errorDisplay.textContent = '';
             errorDisplay.style.display = 'none';
             resultsHeader.style.display = 'none';
@@ -326,12 +83,12 @@
         async function handleGenerate() {
             const topic = topicInput.value.trim();
             if (!topic) {
-                showError("Oops! Please enter a topic to spark some ideas.");
+                showError("Please enter a topic to spark some ideas!");
                 topicInput.focus();
                 return;
             }
 
-            clearFeedback();
+            clearFeedbackAndResults();
             showLoading(true);
 
             try {
@@ -346,12 +103,12 @@
                 showLoading(false);
 
                 if (!response.ok) {
-                    let errorMsg = "Oh no! Something went sideways. Please try again.";
+                    let errorMsg = "An unexpected error occurred. Please try again.";
                     try {
                         const errorData = await response.json();
                         errorMsg = errorData.error || errorData.message || `Server error: ${response.status}`;
                     } catch (e) {
-                        errorMsg = `Server hiccup: ${response.status} - ${response.statusText}. Try again?`;
+                        errorMsg = `Server error: ${response.status} - ${response.statusText}. Unable to parse error details.`;
                     }
                     throw new Error(errorMsg);
                 }
@@ -362,17 +119,17 @@
                     resultsHeader.style.display = 'block';
                     data.ideas.forEach((idea, index) => {
                         const li = document.createElement('li');
-                        li.innerHTML = `💡 <strong>Idea ${index + 1}:</strong> ${idea.replace(/^\d+\.\s*/, '')}`; // More descriptive and removes existing numbers
+                        li.innerHTML = `💡 <span class="idea-number">${index + 1}.</span> ${idea.replace(/^\d+\.\s*/, '')}`; // Add number and clean if AI adds it
                         ideasList.appendChild(li);
                     });
                 } else {
-                    showError(data.message || "Hmm, my crystal ball is cloudy for that topic. Try another one?");
+                    showError(data.message || "Hmm, couldn’t spark any ideas for that. Try a different topic or be more specific!");
                 }
 
             } catch (error) {
                 console.error('Error fetching ideas:', error);
                 showLoading(false);
-                showError(error.message || "Could not connect to the ideaverse. Check your internet or try later!");
+                showError(error.message || "Could not fetch ideas. Please check your connection or try again later.");
             }
         }
 
