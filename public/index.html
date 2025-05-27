@@ -36,14 +36,12 @@
                 <section class="results-section" id="resultsArea">
                     <h3 id="resultsHeader">Here are some sparks for you:</h3>
                     
-                    <!-- START: New Tags Section -->
                     <div class="tags-container" id="tagsContainer" style="display:none;">
                         <h4>Common Themes:</h4>
                         <div class="tags-list" id="tagsList">
                             <!-- Tags will be populated here -->
                         </div>
                     </div>
-                    <!-- END: New Tags Section -->
 
                     <ul id="ideas-list">
                         <!-- Ideas will be populated here -->
@@ -64,10 +62,8 @@
         const loadingIndicator = document.getElementById('loadingIndicator');
         const errorDisplay = document.getElementById('errorDisplay');
         const resultsHeader = document.getElementById('resultsHeader');
-        // START: New DOM Elements for Tags
         const tagsContainer = document.getElementById('tagsContainer');
         const tagsList = document.getElementById('tagsList');
-        // END: New DOM Elements for Tags
 
         function showLoading(isLoading) {
             loadingIndicator.style.display = isLoading ? 'flex' : 'none';
@@ -82,8 +78,8 @@
         function showError(message) {
             ideasList.innerHTML = '';
             resultsHeader.style.display = 'none';
-            tagsContainer.style.display = 'none'; // Hide tags on error
-            tagsList.innerHTML = '';              // Clear old tags
+            tagsContainer.style.display = 'none';
+            tagsList.innerHTML = '';
             errorDisplay.textContent = message;
             errorDisplay.style.display = 'block';
         }
@@ -93,16 +89,13 @@
             errorDisplay.style.display = 'none';
             resultsHeader.style.display = 'none';
             ideasList.innerHTML = '';
-            tagsContainer.style.display = 'none'; // Hide tags when clearing
-            tagsList.innerHTML = '';              // Clear old tags
+            tagsContainer.style.display = 'none';
+            tagsList.innerHTML = '';
         }
 
-        // START: Simple Keyword Extraction Function
         function extractKeywords(ideasArray, minFrequency = 2, minLength = 4) {
             const allText = ideasArray.join(" ").toLowerCase();
-            const words = allText.match(/\b(\w+)\b/g) || []; // Get all words
-
-            // Remove common "stop words" - this list can be expanded
+            const words = allText.match(/\b(\w+)\b/g) || [];
             const stopWords = new Set([
                 "a", "an", "the", "is", "are", "was", "were", "be", "been", "being",
                 "have", "has", "had", "do", "does", "did", "will", "would", "should",
@@ -116,34 +109,26 @@
                 "new", "post", "idea", "ideas", "blog", "tweet", "tweets", "content", "create",
                 "some", "topic", "make", "one", "all", "use", "also", "explore", "share", "start", "try"
             ]);
-
             const wordFrequencies = {};
             words.forEach(word => {
-                if (!stopWords.has(word) && word.length >= minLength && isNaN(word)) { // Exclude stop words, short words, and numbers
+                if (!stopWords.has(word) && word.length >= minLength && isNaN(word)) {
                     wordFrequencies[word] = (wordFrequencies[word] || 0) + 1;
                 }
             });
-
             const sortedKeywords = Object.entries(wordFrequencies)
                 .filter(([word, count]) => count >= minFrequency)
-                .sort(([, a], [, b]) => b - a) // Sort by frequency desc
+                .sort(([, a], [, b]) => b - a)
                 .map(([word]) => word);
-
-            return sortedKeywords.slice(0, 5); // Return top 5 keywords
+            return sortedKeywords.slice(0, 5);
         }
-        // END: Simple Keyword Extraction Function
 
-
-        // START: Function to display tags
         function displayTags(keywords) {
-            tagsList.innerHTML = ''; // Clear previous tags
+            tagsList.innerHTML = '';
             if (keywords.length > 0) {
                 keywords.forEach(keyword => {
                     const tagElement = document.createElement('span');
                     tagElement.classList.add('tag-item');
                     tagElement.textContent = keyword;
-                    // Optional: Add event listener for tag click here
-                    // tagElement.addEventListener('click', () => filterByTag(keyword));
                     tagsList.appendChild(tagElement);
                 });
                 tagsContainer.style.display = 'block';
@@ -151,8 +136,18 @@
                 tagsContainer.style.display = 'none';
             }
         }
-        // END: Function to display tags
 
+        // START: New function for Copy to Clipboard feedback
+        function showCopyFeedback(buttonElement) {
+            const originalText = buttonElement.innerHTML;
+            buttonElement.innerHTML = 'Copied!';
+            buttonElement.classList.add('copied');
+            setTimeout(() => {
+                buttonElement.innerHTML = originalText;
+                buttonElement.classList.remove('copied');
+            }, 1500); // Reset after 1.5 seconds
+        }
+        // END: New function for Copy to Clipboard feedback
 
         async function handleGenerate() {
             const topic = topicInput.value.trim();
@@ -191,19 +186,44 @@
 
                 if (data.ideas && data.ideas.length > 0) {
                     resultsHeader.style.display = 'block';
-                    // Clean ideas before displaying AND extracting keywords
                     const cleanedIdeas = data.ideas.map(idea => idea.replace(/^\d+\.\s*/, '').trim());
 
-                    cleanedIdeas.forEach((idea, index) => {
+                    cleanedIdeas.forEach((ideaText, index) => {
                         const li = document.createElement('li');
-                        li.innerHTML = `💡 <span class="idea-number">${index + 1}.</span> ${idea}`;
+                        
+                        // Create a div for the idea text itself
+                        const ideaTextDiv = document.createElement('div');
+                        ideaTextDiv.classList.add('idea-text-content');
+                        ideaTextDiv.innerHTML = `💡 <span class="idea-number">${index + 1}.</span> ${ideaText}`;
+                        
+                        // Create the copy button
+                        const copyBtn = document.createElement('button');
+                        copyBtn.classList.add('copy-btn');
+                        copyBtn.innerHTML = '📋'; // Clipboard emoji, or use an SVG/icon font
+                        copyBtn.setAttribute('aria-label', 'Copy idea to clipboard');
+                        copyBtn.title = 'Copy idea'; // Tooltip for desktop
+
+                        copyBtn.addEventListener('click', (event) => {
+                            event.stopPropagation(); // Prevent any parent event listeners if added later
+                            navigator.clipboard.writeText(ideaText)
+                                .then(() => {
+                                    showCopyFeedback(copyBtn);
+                                    console.log('Idea copied to clipboard:', ideaText);
+                                })
+                                .catch(err => {
+                                    console.error('Failed to copy idea:', err);
+                                    // Optionally show an error message to the user
+                                    alert('Failed to copy text. Your browser might not support this feature or requires permissions.');
+                                });
+                        });
+                        
+                        li.appendChild(ideaTextDiv);
+                        li.appendChild(copyBtn);
                         ideasList.appendChild(li);
                     });
 
-                    // START: Extract and Display Tags
                     const keywords = extractKeywords(cleanedIdeas);
                     displayTags(keywords);
-                    // END: Extract and Display Tags
 
                 } else {
                     showError(data.message || "Hmm, couldn’t spark any ideas for that. Try a different topic or be more specific!");

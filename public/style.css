@@ -185,9 +185,13 @@ header .subtitle {
     list-style-type: none;
     padding: 0;
 }
+
 #ideas-list li {
     background-color: #eaf3f8; /* Lighter, softer blue for ideas */
-    padding: 15px 20px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    padding-left: 20px; /* Original left padding */
+    padding-right: 15px; /* Reduced right padding since button has its own */
     margin-bottom: 12px;
     border-radius: 8px;
     font-weight: 400; /* Normal weight */
@@ -197,7 +201,13 @@ header .subtitle {
     animation: fadeInItem 0.4s ease-out forwards;
     font-size: 0.95rem; /* Slightly smaller ideas text if desired */
     color: #2c3e50;
+    /* Added for copy button integration */
+    display: flex; 
+    justify-content: space-between;
+    align-items: center; 
+    position: relative; 
 }
+
 .idea-number {
     font-weight: 600;
     color: #1f638b; /* Darker blue for number */
@@ -249,7 +259,9 @@ footer p {
         font-size: 1.3rem;
     }
     #ideas-list li {
-        padding: 12px 15px;
+        padding: 12px 15px; /* This will be overridden by the more specific #ideas-list li below for L/R padding */
+        padding-left: 15px;
+        padding-right: 10px;
     }
 }
 
@@ -286,9 +298,39 @@ footer p {
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-/* Optional: Hover effect if tags become clickable
+/* Optional: Hover effect if tags become clickable*/
 .tag-item:hover {
     background-color: #2980b9;
     color: #ffffff;
 }
-*/
+
+
+/* Styles for Idea List Items' Copy Button Integration */
+.idea-text-content {
+    flex-grow: 1; /* Allow text to take up available space */
+    padding-right: 10px; /* Add some space between text and copy button */
+}
+
+.copy-btn {
+    background-color: transparent;
+    color: #555; /* Muted color for the icon */
+    border: none;
+    padding: 5px 8px;
+    font-size: 1.2rem; /* Adjust size of emoji/icon */
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    flex-shrink: 0; /* Prevent button from shrinking */
+}
+
+.copy-btn:hover {
+    background-color: #e0e0e0; /* Light background on hover */
+    color: #2980b9; /* Highlight color on hover */
+}
+
+.copy-btn.copied {
+    color: #27ae60; /* Green for success */
+    font-size: 0.9rem; /* Slightly smaller for "Copied!" text */
+    font-weight: 500;
+    pointer-events: none; /* Prevent interaction while showing "Copied!" */
+}
