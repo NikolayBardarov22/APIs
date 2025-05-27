@@ -252,3 +252,43 @@ footer p {
         padding: 12px 15px;
     }
 }
+
+/* Tags Section Styling */
+.tags-container {
+    margin-top: 20px; /* Space above tags */
+    margin-bottom: 25px; /* Space below tags, before ideas list */
+    text-align: center;
+}
+
+.tags-container h4 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #34495e; /* Consistent with other subheaders */
+    margin-bottom: 12px;
+}
+
+.tags-list {
+    display: flex;
+    flex-wrap: wrap; /* Allow tags to wrap to next line */
+    justify-content: center; /* Center the tags */
+    gap: 8px; /* Space between tags */
+}
+
+.tag-item {
+    background-color: #dfeff8; /* Light, muted blue for tags */
+    color: #1f638b; /* Darker blue text for contrast */
+    padding: 6px 12px;
+    border-radius: 16px; /* Pill shape */
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: default; /* Change to 'pointer' if you add click functionality */
+    transition: background-color 0.2s ease, color 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Optional: Hover effect if tags become clickable
+.tag-item:hover {
+    background-color: #2980b9;
+    color: #ffffff;
+}
+*/
