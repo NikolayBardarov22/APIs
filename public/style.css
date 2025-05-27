@@ -69,20 +69,20 @@ header .subtitle {
 .view-favorites-container {
     margin-top: 20px; /* Space above the button */
     margin-bottom: 10px; /* Space below before main content or adjusts overall header bottom margin */
-    text-align: center; 
+    text-align: center;
 }
 
 .secondary-btn {
-    background-color: #f0f3f5; 
-    color: #34495e; 
-    border: 1px solid #dfe4e7; 
+    background-color: #f0f3f5;
+    color: #34495e;
+    border: 1px solid #dfe4e7;
     padding: 10px 20px;
     font-size: 0.95rem;
     font-weight: 500;
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
-    display: inline-flex; 
+    display: inline-flex;
     align-items: center;
     gap: 6px;
 }
@@ -236,10 +236,10 @@ header .subtitle {
     animation: fadeInItem 0.4s ease-out forwards;
     font-size: 0.95rem;
     color: #2c3e50;
-    display: flex; 
+    display: flex;
     justify-content: space-between;
-    align-items: center; 
-    position: relative; 
+    align-items: center;
+    position: relative;
 }
 
 /* If favorites list items need a slightly different background: */
@@ -332,7 +332,7 @@ footer p {
     border-radius: 16px;
     font-size: 0.85rem;
     font-weight: 500;
-    cursor: default; 
+    cursor: default;
     transition: background-color 0.2s ease, color 0.2s ease;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
@@ -362,11 +362,11 @@ footer p {
     font-size: 1.3rem; /* Standardize icon size */
     cursor: pointer;
     border-radius: 50%; /* Make them circular */
-    line-height: 1; 
+    line-height: 1;
     transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
     width: 36px; /* Fixed width for consistent circle */
     height: 36px; /* Fixed height */
-    display: inline-flex; 
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     color: #7f8c8d; /* Default muted icon color */
@@ -400,10 +400,10 @@ footer p {
     color: #2980b9; /* Blue highlight on hover for copy */
 }
 .copy-btn.copied {
-    color: #27ae60; 
-    font-size: 0.9rem; 
+    color: #27ae60;
+    font-size: 0.9rem;
     font-weight: 500;
-    pointer-events: none; 
+    pointer-events: none;
     /* The "Copied!" text is set via JS, so ensure width/height allows for it or remove text change */
     /* If only icon changes, no need to worry about text size in .copied state */
 }
@@ -411,7 +411,7 @@ footer p {
 
 /* Favorites Section Specifics */
 .favorites-section {
-    margin-top: 30px; 
+    margin-top: 30px;
 }
 
 .favorites-header-controls {
