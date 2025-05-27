@@ -11,47 +11,48 @@ html, body {
 }
 
 body {
-    font-family: 'Poppins', sans-serif; /* Changed font */
-    background-color: #f4f7f6; /* Softer, slightly off-white */
-    color: #2c3e50; /* Darker, more professional text */
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f7f6;
+    color: #2c3e50;
     display: flex;
-    flex-direction: column; /* Allow footer to stick to bottom if content is short */
+    flex-direction: column;
     align-items: center;
-    justify-content: center; /* Center content vertically for initial load */
+    justify-content: center;
     padding: 20px;
     line-height: 1.65;
     transition: background-color 0.3s ease;
 }
 
-.page-wrapper { /* New wrapper to ensure proper centering and full height usage */
+.page-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     width: 100%;
-    min-height: 100%; /* Ensure it takes at least full viewport height */
+    min-height: 100%;
 }
 
 .container {
     background-color: #ffffff;
     width: 100%;
-    max-width: 650px; /* Slightly wider for better spacing */
+    max-width: 650px;
     padding: 35px 45px;
-    border-radius: 16px; /* More rounded */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Softer, more diffuse shadow */
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     text-align: center;
-    margin: auto; /* Helps with centering within flex parent if needed */
+    margin: auto;
 }
 
 /* Header */
 header {
     margin-bottom: 30px;
+    position: relative; /* Added for absolute positioning of favorites button container if needed */
 }
 
 header h1 {
-    font-size: 2.8rem; /* Larger */
+    font-size: 2.8rem;
     font-weight: 700;
-    color: #2980b9; /* A deeper, professional blue */
+    color: #2980b9;
     margin-bottom: 10px;
     line-height: 1.2;
 }
@@ -59,34 +60,67 @@ header h1 {
 header .subtitle {
     font-size: 1.15rem;
     font-weight: 300;
-    color: #555; /* Slightly darker muted color */
+    color: #555;
     max-width: 450px;
-    margin: 0 auto 20px auto; /* Center the subtitle text */
+    margin: 0 auto 0 auto; /* Reduced bottom margin if favorites button is below */
 }
+
+/* "View My Favorite Sparks ★" Button in Header Styling */
+.view-favorites-container {
+    margin-top: 20px; /* Space above the button */
+    margin-bottom: 10px; /* Space below before main content or adjusts overall header bottom margin */
+    text-align: center; 
+}
+
+.secondary-btn {
+    background-color: #f0f3f5; 
+    color: #34495e; 
+    border: 1px solid #dfe4e7; 
+    padding: 10px 20px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+    display: inline-flex; 
+    align-items: center;
+    gap: 6px;
+}
+
+.secondary-btn:hover {
+    background-color: #e4e9ed;
+    border-color: #ccd1d5;
+}
+
+.secondary-btn:active {
+    transform: scale(0.97);
+}
+
 
 /* Input Section */
 .input-section {
+    margin-top: 20px; /* Added margin-top if favorites button pushed header content down */
     margin-bottom: 30px;
 }
-.input-section h2 { /* "What topic are you exploring?" */
+.input-section h2 {
     font-size: 1.4rem;
     font-weight: 500;
-    color: #34495e; /* Another shade of professional blue/gray */
+    color: #34495e;
     margin-bottom: 20px;
 }
 
 .input-area {
     display: flex;
-    flex-direction: column; /* Stack input and button on all screens */
-    gap: 15px; /* Space between input and button */
+    flex-direction: column;
+    gap: 15px;
 }
 
 #topicInput {
     width: 100%;
     padding: 16px 20px;
     font-size: 1rem;
-    border: 1px solid #ced4da; /* Lighter border */
-    border-radius: 10px; /* More rounded */
+    border: 1px solid #ced4da;
+    border-radius: 10px;
     font-family: 'Poppins', sans-serif;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -96,129 +130,138 @@ header .subtitle {
 }
 #topicInput:focus {
     outline: none;
-    border-color: #2980b9; /* Highlight color */
+    border-color: #2980b9;
     box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.15);
 }
 
 #generateBtn {
     width: 100%;
-    background-color: #2980b9; /* Matching deeper blue */
+    background-color: #2980b9;
     color: white;
     padding: 16px;
     font-size: 1.1rem;
-    font-weight: 600; /* Bolder */
+    font-weight: 600;
     border: none;
     border-radius: 10px;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out, transform 0.1s ease;
-    display: flex; /* For spinner alignment */
+    display: flex;
     align-items: center;
     justify-content: center;
 }
 #generateBtn:hover {
-    background-color: #1f638b; /* Darker shade on hover */
+    background-color: #1f638b;
 }
 #generateBtn:active {
     transform: scale(0.98);
 }
 #generateBtn.loading, #generateBtn:disabled {
-    background-color: #7fa8c2; /* Lighter, disabled blue */
+    background-color: #7fa8c2;
     cursor: not-allowed;
 }
 
 /* Feedback Area: Loading and Error */
 .feedback-area {
-    min-height: 30px; /* Space for messages */
+    min-height: 30px;
     margin-bottom: 25px;
     text-align: center;
 }
 
 .loading-indicator {
-    display: none; /* Hidden by default */
-    align-items: center; /* Vertically align spinner and text */
-    justify-content: center; /* Horizontally center content */
+    display: none;
+    align-items: center;
+    justify-content: center;
     font-size: 1rem;
     color: #2980b9;
-    font-weight: 500; /* More prominent */
+    font-weight: 500;
     padding: 10px 0;
 }
 .loading-indicator .spinner {
     display: inline-block;
-    width: 1.2em; /* Slightly larger */
+    width: 1.2em;
     height: 1.2em;
     border: 3px solid currentColor;
     border-right-color: transparent;
     border-radius: 50%;
     animation: spin 0.75s linear infinite;
-    margin-right: 10px; /* More space */
+    margin-right: 10px;
 }
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
 
 .error-message {
-    display: none; /* Hidden by default */
-    color: #c0392b; /* Professional error red */
+    display: none;
+    color: #c0392b;
     background-color: #fdecea;
     padding: 12px 15px;
     border-radius: 8px;
     font-size: 0.95rem;
     font-weight: 500;
     border: 1px solid #f5c6cb;
-    margin-top: 10px; /* Spacing if it appears after loading */
+    margin-top: 10px;
 }
 
 /* Results Section */
 .results-section {
     text-align: left;
-    margin-top: 10px; /* Adjusted, as feedback area already has margin-bottom */
+    margin-top: 10px;
 }
-.results-section h3 { /* "Here are some sparks for you:" */
+.results-section h3 {
     font-size: 1.5rem;
-    font-weight: 600; /* Bolder */
+    font-weight: 600;
     color: #34495e;
     margin-bottom: 20px;
-    display: none; /* Hidden until results appear */
-    text-align: center; /* Centering the results header */
+    display: none;
+    text-align: center;
 }
-#ideas-list {
+#ideas-list, #favorites-list { /* Apply shared list item styles */
     list-style-type: none;
     padding: 0;
 }
 
-#ideas-list li {
-    background-color: #eaf3f8; /* Lighter, softer blue for ideas */
+#ideas-list li,
+#favorites-list li {
+    background-color: #eaf3f8;
     padding-top: 12px;
     padding-bottom: 12px;
-    padding-left: 20px; /* Original left padding */
-    padding-right: 15px; /* Reduced right padding since button has its own */
+    padding-left: 20px;
+    padding-right: 15px;
     margin-bottom: 12px;
     border-radius: 8px;
-    font-weight: 400; /* Normal weight */
-    border-left: 4px solid #2980b9; /* Accent border */
+    font-weight: 400;
+    border-left: 4px solid #2980b9;
     opacity: 0;
     transform: translateY(15px);
     animation: fadeInItem 0.4s ease-out forwards;
-    font-size: 0.95rem; /* Slightly smaller ideas text if desired */
+    font-size: 0.95rem;
     color: #2c3e50;
-    /* Added for copy button integration */
     display: flex; 
     justify-content: space-between;
     align-items: center; 
     position: relative; 
 }
 
+/* If favorites list items need a slightly different background: */
+#favorites-list li {
+    background-color: #f8f9fa; /* Slightly different, or remove if you want them the same as #ideas-list li */
+}
+
+
 .idea-number {
     font-weight: 600;
-    color: #1f638b; /* Darker blue for number */
+    color: #1f638b;
     margin-right: 3px;
 }
 
-#ideas-list li:nth-child(1) { animation-delay: 0.05s; }
-#ideas-list li:nth-child(2) { animation-delay: 0.1s; }
-#ideas-list li:nth-child(3) { animation-delay: 0.15s; }
-#ideas-list li:nth-child(4) { animation-delay: 0.2s; }
-#ideas-list li:nth-child(5) { animation-delay: 0.25s; }
+/* Animation delays for list items - apply to both lists */
+#ideas-list li:nth-child(1), #favorites-list li:nth-child(1) { animation-delay: 0.05s; }
+#ideas-list li:nth-child(2), #favorites-list li:nth-child(2) { animation-delay: 0.1s; }
+#ideas-list li:nth-child(3), #favorites-list li:nth-child(3) { animation-delay: 0.15s; }
+#ideas-list li:nth-child(4), #favorites-list li:nth-child(4) { animation-delay: 0.2s; }
+#ideas-list li:nth-child(5), #favorites-list li:nth-child(5) { animation-delay: 0.25s; }
+/* For more items, continue pattern or use JS for delays */
+
 
 @keyframes fadeInItem {
     to {
@@ -231,20 +274,20 @@ header .subtitle {
 footer {
     margin-top: 40px;
     padding-top: 25px;
-    border-top: 1px solid #e0e0e0; /* Lighter separator */
+    border-top: 1px solid #e0e0e0;
 }
 footer p {
     font-size: 0.9rem;
-    color: #7f8c8d; /* Muted gray */
+    color: #7f8c8d;
     font-weight: 300;
 }
 
 /* Mobile Responsiveness */
 @media (max-width: 700px) {
     .container {
-        padding: 25px 20px; /* Adjust padding for smaller screens */
-        margin-top: 20px; /* Ensure some space from top on mobile */
-        margin-bottom: 20px; /* Ensure some space from bottom */
+        padding: 25px 20px;
+        margin-top: 20px;
+        margin-bottom: 20px;
     }
     header h1 {
         font-size: 2.2rem;
@@ -258,8 +301,7 @@ footer p {
     .results-section h3 {
         font-size: 1.3rem;
     }
-    #ideas-list li {
-        padding: 12px 15px; /* This will be overridden by the more specific #ideas-list li below for L/R padding */
+    #ideas-list li, #favorites-list li { /* Apply responsive padding to both lists */
         padding-left: 15px;
         padding-right: 10px;
     }
@@ -267,70 +309,138 @@ footer p {
 
 /* Tags Section Styling */
 .tags-container {
-    margin-top: 20px; /* Space above tags */
-    margin-bottom: 25px; /* Space below tags, before ideas list */
+    margin-top: 20px;
+    margin-bottom: 25px;
     text-align: center;
 }
-
 .tags-container h4 {
     font-size: 1.1rem;
     font-weight: 500;
-    color: #34495e; /* Consistent with other subheaders */
+    color: #34495e;
     margin-bottom: 12px;
 }
-
 .tags-list {
     display: flex;
-    flex-wrap: wrap; /* Allow tags to wrap to next line */
-    justify-content: center; /* Center the tags */
-    gap: 8px; /* Space between tags */
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
 }
-
 .tag-item {
-    background-color: #dfeff8; /* Light, muted blue for tags */
-    color: #1f638b; /* Darker blue text for contrast */
+    background-color: #dfeff8;
+    color: #1f638b;
     padding: 6px 12px;
-    border-radius: 16px; /* Pill shape */
+    border-radius: 16px;
     font-size: 0.85rem;
     font-weight: 500;
-    cursor: default; /* Change to 'pointer' if you add click functionality */
+    cursor: default; 
     transition: background-color 0.2s ease, color 0.2s ease;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
-
-/* Optional: Hover effect if tags become clickable*/
-.tag-item:hover {
+.tag-item:hover { /* Example if tags become clickable */
     background-color: #2980b9;
     color: #ffffff;
 }
 
-
-/* Styles for Idea List Items' Copy Button Integration */
+/* Styles for Idea List Items' Controls (Copy & Star buttons) */
 .idea-text-content {
-    flex-grow: 1; /* Allow text to take up available space */
-    padding-right: 10px; /* Add some space between text and copy button */
+    flex-grow: 1;
+    padding-right: 10px;
 }
 
-.copy-btn {
+.idea-controls { /* Wrapper for star and copy buttons */
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Reduced gap a bit */
+    flex-shrink: 0;
+    margin-left: 5px; /* Space from text */
+}
+
+.copy-btn, .star-btn { /* Shared base style for icon buttons */
     background-color: transparent;
-    color: #555; /* Muted color for the icon */
     border: none;
-    padding: 5px 8px;
-    font-size: 1.2rem; /* Adjust size of emoji/icon */
+    padding: 6px; /* Equal padding */
+    font-size: 1.3rem; /* Standardize icon size */
     cursor: pointer;
-    border-radius: 6px;
-    transition: background-color 0.2s ease, color 0.2s ease;
-    flex-shrink: 0; /* Prevent button from shrinking */
+    border-radius: 50%; /* Make them circular */
+    line-height: 1; 
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+    width: 36px; /* Fixed width for consistent circle */
+    height: 36px; /* Fixed height */
+    display: inline-flex; 
+    align-items: center;
+    justify-content: center;
+    color: #7f8c8d; /* Default muted icon color */
 }
 
+.copy-btn:hover, .star-btn:hover {
+    background-color: #f0f0f0; /* Light gray background on hover for both */
+}
+.copy-btn:active, .star-btn:active {
+    transform: scale(0.9); /* Click feedback */
+}
+
+.star-btn { /* Specific to star, default state is un-favorited */
+    color: #bdc3c7; /* Neutral gray for empty star */
+}
+.star-btn:hover {
+     color: #f39c12; /* Gold on hover */
+}
+.star-btn.favorited {
+    color: #f1c40f; /* Filled star color - vibrant gold */
+}
+.star-btn.favorited:hover {
+    color: #e6b800; /* Slightly darker gold on hover when favorited */
+}
+
+
+.copy-btn { /* Specific to copy button */
+    color: #7f8c8d; /* Slightly different default than star for visual hierarchy if needed */
+}
 .copy-btn:hover {
-    background-color: #e0e0e0; /* Light background on hover */
-    color: #2980b9; /* Highlight color on hover */
+    color: #2980b9; /* Blue highlight on hover for copy */
+}
+.copy-btn.copied {
+    color: #27ae60; 
+    font-size: 0.9rem; 
+    font-weight: 500;
+    pointer-events: none; 
+    /* The "Copied!" text is set via JS, so ensure width/height allows for it or remove text change */
+    /* If only icon changes, no need to worry about text size in .copied state */
 }
 
-.copy-btn.copied {
-    color: #27ae60; /* Green for success */
-    font-size: 0.9rem; /* Slightly smaller for "Copied!" text */
-    font-weight: 500;
-    pointer-events: none; /* Prevent interaction while showing "Copied!" */
+
+/* Favorites Section Specifics */
+.favorites-section {
+    margin-top: 30px; 
+}
+
+.favorites-header-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.favorites-section h3 { /* Header for favorites list */
+    font-size: 1.5rem; /* Same as generated ideas header */
+    font-weight: 600;
+    color: #34495e;
+    text-align: left; /* Keep aligned with button */
+    /* Remove margin-bottom if .favorites-header-controls handles it */
+}
+
+/* Specific styling for "Back to Generator" if it's a secondary-btn */
+.favorites-header-controls .secondary-btn.small-btn {
+    padding: 8px 15px;
+    font-size: 0.9rem;
+}
+
+#noFavoritesMessage {
+    text-align: center;
+    color: #777;
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    font-style: italic;
 }
