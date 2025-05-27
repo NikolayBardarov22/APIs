@@ -15,10 +15,15 @@
             <header>
                 <h1>AI Idea Spark</h1>
                 <p class="subtitle">Ignite your creativity with AI-powered ideas.</p>
+                <!-- START: View Favorites Button -->
+                <div class="view-favorites-container">
+                    <button id="viewFavoritesBtn" class="secondary-btn">View My Favorite Sparks ★</button>
+                </div>
+                <!-- END: View Favorites Button -->
             </header>
 
             <main>
-                <section class="input-section">
+                <section class="input-section" id="inputSection">
                     <h2>What topic are you exploring?</h2>
                     <div class="input-area">
                         <input type="text" id="topicInput" placeholder="e.g., Sustainable Energy, Future of Work...">
@@ -47,6 +52,19 @@
                         <!-- Ideas will be populated here -->
                     </ul>
                 </section>
+
+                <!-- START: Favorites Section (Initially Hidden) -->
+                <section class="favorites-section" id="favoritesSection" style="display:none;">
+                    <div class="favorites-header-controls">
+                        <h3>My Favorite Sparks</h3>
+                        <button id="backToGeneratorBtn" class="secondary-btn small-btn">← Back to Generator</button>
+                    </div>
+                    <ul id="favorites-list">
+                        <!-- Favorite ideas will be populated here -->
+                    </ul>
+                    <p id="noFavoritesMessage" style="display:none; text-align:center; color: #777; margin-top: 20px;">You haven't favorited any sparks yet!</p>
+                </section>
+                <!-- END: Favorites Section -->
             </main>
 
             <footer>
@@ -65,28 +83,77 @@
         const tagsContainer = document.getElementById('tagsContainer');
         const tagsList = document.getElementById('tagsList');
 
+        // START: New DOM Elements for Favorites
+        const viewFavoritesBtn = document.getElementById('viewFavoritesBtn');
+        const favoritesSection = document.getElementById('favoritesSection');
+        const favoritesList = document.getElementById('favorites-list');
+        const backToGeneratorBtn = document.getElementById('backToGeneratorBtn');
+        const noFavoritesMessage = document.getElementById('noFavoritesMessage');
+        const inputSection = document.getElementById('inputSection'); // To hide/show generator section
+        const resultsArea = document.getElementById('resultsArea');   // To hide/show results section
+        // END: New DOM Elements for Favorites
+
+        const FAVORITES_STORAGE_KEY = 'aiIdeaSparkFavorites';
+
+        // START: Functions to manage favorites in LocalStorage
+        function getFavorites() {
+            return JSON.parse(localStorage.getItem(FAVORITES_STORAGE_KEY)) || [];
+        }
+
+        function saveFavorites(favoritesArray) {
+            localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favoritesArray));
+        }
+
+        function isFavorited(ideaText) {
+            const favorites = getFavorites();
+            return favorites.some(fav => fav.text === ideaText);
+        }
+
+        function toggleFavorite(ideaText, starBtn) {
+            let favorites = getFavorites();
+            const ideaIndex = favorites.findIndex(fav => fav.text === ideaText);
+
+            if (ideaIndex > -1) { // Already favorited, so unfavorite
+                favorites.splice(ideaIndex, 1);
+                starBtn.innerHTML = '☆'; // Empty star
+                starBtn.classList.remove('favorited');
+                starBtn.title = 'Add to favorites';
+            } else { // Not favorited, so favorite
+                favorites.push({ text: ideaText, timestamp: new Date().toISOString() });
+                starBtn.innerHTML = '★'; // Filled star
+                starBtn.classList.add('favorited');
+                starBtn.title = 'Remove from favorites';
+            }
+            saveFavorites(favorites);
+            // If currently viewing favorites, refresh the list
+            if (favoritesSection.style.display !== 'none') {
+                displayFavorites();
+            }
+        }
+        // END: Functions to manage favorites
+
         function showLoading(isLoading) {
             loadingIndicator.style.display = isLoading ? 'flex' : 'none';
             generateBtn.disabled = isLoading;
-            if (isLoading) {
-                generateBtn.classList.add('loading');
-            } else {
-                generateBtn.classList.remove('loading');
-            }
+            generateBtn.classList.toggle('loading', isLoading);
         }
 
-        function showError(message) {
-            ideasList.innerHTML = '';
-            resultsHeader.style.display = 'none';
-            tagsContainer.style.display = 'none';
-            tagsList.innerHTML = '';
+        function showError(message, forFavorites = false) {
+            if (!forFavorites) {
+                ideasList.innerHTML = '';
+                resultsHeader.style.display = 'none';
+                tagsContainer.style.display = 'none';
+                tagsList.innerHTML = '';
+            }
             errorDisplay.textContent = message;
             errorDisplay.style.display = 'block';
         }
 
-        function clearFeedbackAndResults() {
-            errorDisplay.textContent = '';
-            errorDisplay.style.display = 'none';
+        function clearFeedbackAndResults(clearError = true) {
+            if (clearError) {
+                errorDisplay.textContent = '';
+                errorDisplay.style.display = 'none';
+            }
             resultsHeader.style.display = 'none';
             ideasList.innerHTML = '';
             tagsContainer.style.display = 'none';
@@ -96,7 +163,7 @@
         function extractKeywords(ideasArray, minFrequency = 2, minLength = 4) {
             const allText = ideasArray.join(" ").toLowerCase();
             const words = allText.match(/\b(\w+)\b/g) || [];
-            const stopWords = new Set([
+            const stopWords = new Set([ /* ... your existing stop words ... */
                 "a", "an", "the", "is", "are", "was", "were", "be", "been", "being",
                 "have", "has", "had", "do", "does", "did", "will", "would", "should",
                 "can", "could", "may", "might", "must", "and", "but", "or", "nor",
@@ -136,8 +203,7 @@
                 tagsContainer.style.display = 'none';
             }
         }
-
-        // START: New function for Copy to Clipboard feedback
+        
         function showCopyFeedback(buttonElement) {
             const originalText = buttonElement.innerHTML;
             buttonElement.innerHTML = 'Copied!';
@@ -145,11 +211,101 @@
             setTimeout(() => {
                 buttonElement.innerHTML = originalText;
                 buttonElement.classList.remove('copied');
-            }, 1500); // Reset after 1.5 seconds
+            }, 1500);
         }
-        // END: New function for Copy to Clipboard feedback
+
+        // Function to render a single idea list item (used by both generator and favorites view)
+        function renderIdeaListItem(ideaText, index, targetListElement, isFavoriteView = false) {
+            const li = document.createElement('li');
+            
+            const ideaTextDiv = document.createElement('div');
+            ideaTextDiv.classList.add('idea-text-content');
+            if (!isFavoriteView) { // Only show number for generated ideas list
+                ideaTextDiv.innerHTML = `💡 <span class="idea-number">${index + 1}.</span> `;
+            } else {
+                 ideaTextDiv.innerHTML = `💡 `; // Just the emoji for favorites
+            }
+            ideaTextDiv.appendChild(document.createTextNode(ideaText)); // Append text node to prevent XSS if ideaText somehow contains HTML
+
+            const controlsDiv = document.createElement('div'); // Container for star and copy
+            controlsDiv.classList.add('idea-controls');
+
+            // Create the star button
+            const starBtn = document.createElement('button');
+            starBtn.classList.add('star-btn');
+            if (isFavorited(ideaText)) {
+                starBtn.innerHTML = '★'; // Filled star
+                starBtn.classList.add('favorited');
+                starBtn.title = 'Remove from favorites';
+            } else {
+                starBtn.innerHTML = '☆'; // Empty star
+                starBtn.title = 'Add to favorites';
+            }
+            starBtn.setAttribute('aria-label', isFavorited(ideaText) ? 'Unmark as favorite' : 'Mark as favorite');
+            starBtn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                toggleFavorite(ideaText, starBtn);
+            });
+            
+            // Create the copy button
+            const copyBtn = document.createElement('button');
+            copyBtn.classList.add('copy-btn');
+            copyBtn.innerHTML = '📋';
+            copyBtn.setAttribute('aria-label', 'Copy idea to clipboard');
+            copyBtn.title = 'Copy idea';
+            copyBtn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                navigator.clipboard.writeText(ideaText)
+                    .then(() => showCopyFeedback(copyBtn))
+                    .catch(err => {
+                        console.error('Failed to copy idea:', err);
+                        alert('Failed to copy text.');
+                    });
+            });
+            
+            controlsDiv.appendChild(starBtn);
+            controlsDiv.appendChild(copyBtn);
+            
+            li.appendChild(ideaTextDiv);
+            li.appendChild(controlsDiv);
+            targetListElement.appendChild(li);
+        }
+
+
+        // START: Function to display favorites
+        function displayFavorites() {
+            clearFeedbackAndResults(true); // Clear any errors and generated results
+            inputSection.style.display = 'none';
+            resultsArea.style.display = 'none';
+            favoritesSection.style.display = 'block';
+            favoritesList.innerHTML = ''; // Clear previous favorites list
+
+            const favorites = getFavorites();
+            if (favorites.length > 0) {
+                noFavoritesMessage.style.display = 'none';
+                // Sort by most recently favorited if desired (favorites array is already LIFO-like)
+                // Or sort by timestamp: favorites.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+                favorites.forEach((fav, index) => {
+                    renderIdeaListItem(fav.text, index, favoritesList, true);
+                });
+            } else {
+                noFavoritesMessage.style.display = 'block';
+            }
+        }
+        // END: Function to display favorites
+
+        function showGeneratorView() {
+            favoritesSection.style.display = 'none';
+            inputSection.style.display = 'block';
+            resultsArea.style.display = 'block'; // Or hide until results are generated
+            // Optionally clear the main topic input if you want
+            // topicInput.value = '';
+            clearFeedbackAndResults(true); // Clear any potential errors when switching back
+        }
+
 
         async function handleGenerate() {
+            showGeneratorView(); // Ensure we are in generator view
             const topic = topicInput.value.trim();
             if (!topic) {
                 showError("Please enter a topic to spark some ideas!");
@@ -163,22 +319,18 @@
             try {
                 const response = await fetch('/generate-ideas', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ topic: topic })
                 });
 
                 showLoading(false);
 
                 if (!response.ok) {
-                    let errorMsg = "An unexpected error occurred. Please try again.";
+                    let errorMsg = "An unexpected error occurred.";
                     try {
                         const errorData = await response.json();
                         errorMsg = errorData.error || errorData.message || `Server error: ${response.status}`;
-                    } catch (e) {
-                        errorMsg = `Server error: ${response.status} - ${response.statusText}. Unable to parse error details.`;
-                    }
+                    } catch (e) { errorMsg = `Server error: ${response.status} - ${response.statusText}.`; }
                     throw new Error(errorMsg);
                 }
 
@@ -187,55 +339,22 @@
                 if (data.ideas && data.ideas.length > 0) {
                     resultsHeader.style.display = 'block';
                     const cleanedIdeas = data.ideas.map(idea => idea.replace(/^\d+\.\s*/, '').trim());
-
                     cleanedIdeas.forEach((ideaText, index) => {
-                        const li = document.createElement('li');
-                        
-                        // Create a div for the idea text itself
-                        const ideaTextDiv = document.createElement('div');
-                        ideaTextDiv.classList.add('idea-text-content');
-                        ideaTextDiv.innerHTML = `💡 <span class="idea-number">${index + 1}.</span> ${ideaText}`;
-                        
-                        // Create the copy button
-                        const copyBtn = document.createElement('button');
-                        copyBtn.classList.add('copy-btn');
-                        copyBtn.innerHTML = '📋'; // Clipboard emoji, or use an SVG/icon font
-                        copyBtn.setAttribute('aria-label', 'Copy idea to clipboard');
-                        copyBtn.title = 'Copy idea'; // Tooltip for desktop
-
-                        copyBtn.addEventListener('click', (event) => {
-                            event.stopPropagation(); // Prevent any parent event listeners if added later
-                            navigator.clipboard.writeText(ideaText)
-                                .then(() => {
-                                    showCopyFeedback(copyBtn);
-                                    console.log('Idea copied to clipboard:', ideaText);
-                                })
-                                .catch(err => {
-                                    console.error('Failed to copy idea:', err);
-                                    // Optionally show an error message to the user
-                                    alert('Failed to copy text. Your browser might not support this feature or requires permissions.');
-                                });
-                        });
-                        
-                        li.appendChild(ideaTextDiv);
-                        li.appendChild(copyBtn);
-                        ideasList.appendChild(li);
+                        renderIdeaListItem(ideaText, index, ideasList, false);
                     });
-
                     const keywords = extractKeywords(cleanedIdeas);
                     displayTags(keywords);
-
                 } else {
-                    showError(data.message || "Hmm, couldn’t spark any ideas for that. Try a different topic or be more specific!");
+                    showError(data.message || "Hmm, couldn’t spark any ideas for that.");
                 }
-
             } catch (error) {
                 console.error('Error fetching ideas:', error);
                 showLoading(false);
-                showError(error.message || "Could not fetch ideas. Please check your connection or try again later.");
+                showError(error.message || "Could not fetch ideas.");
             }
         }
 
+        // Event Listeners
         generateBtn.addEventListener('click', handleGenerate);
         topicInput.addEventListener('keypress', (event) => {
             if (event.key === 'Enter') {
@@ -243,6 +362,14 @@
                 handleGenerate();
             }
         });
+
+        viewFavoritesBtn.addEventListener('click', displayFavorites);
+        backToGeneratorBtn.addEventListener('click', showGeneratorView);
+
+        // Initial state check (e.g. if user was on favorites page and reloaded)
+        // For now, we'll always start on the generator page.
+        showGeneratorView();
+
     </script>
 </body>
 </html>
